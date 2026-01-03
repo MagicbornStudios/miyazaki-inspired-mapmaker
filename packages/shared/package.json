@@ -1,0 +1,10 @@
+{
+  "name": "@cars-and-magic/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@cars-and-magic/registry": "workspace:*",
+    "zod": "^3.23.8"
+  }
+}

@@ -6,5 +6,9 @@ import type { DomainRegistry } from '../types.js';
 export const netRegistry = {
   domain: 'Net',
   range: { start: 8000, end: 8999 },
-  entries: []
+  entries: [
+    { id: 8000, key: 'submit_playline', status: 'active' },
+    { id: 8001, key: 'state_snapshot', status: 'active' },
+    { id: 8002, key: 'turn_resolved', status: 'active' }
+  ]
 } satisfies DomainRegistry<'Net'>;
