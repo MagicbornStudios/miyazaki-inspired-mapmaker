@@ -4,7 +4,7 @@ This document distills the current direction for the Cars and Magic MVP so futur
 
 ## Tech Stack (non-optional foundation)
 - **Monorepo/tooling:** pnpm workspaces, TypeScript, ESLint, Prettier, Vitest; Turbo optional for caching.
-- **Client:** Next.js (App Router) + React, TailwindCSS, shadcn/ui + Radix UI, Zustand, zod, Phaser 3 with phaser3-rex-plugins as needed; optional framer-motion/clsx/tailwind-merge/react-use.
+- **Client:** Next.js (App Router) + React, TailwindCSS, shadcn/ui + Radix UI, Zustand, zod, **Three.js** for rendering (greybox primitives first, replace with authored assets later); optional framer-motion/clsx/tailwind-merge/react-use.
 - **Server:** Node.js + TypeScript, Colyseus, zod, nanoid.
 - **Shared:** zod schemas + TS types shared via a package.
 - **Deployment:** Render (separate services for web and server) with client retry UI for sleeping instances.
@@ -18,13 +18,13 @@ This document distills the current direction for the Cars and Magic MVP so futur
 ## Repository Layout (target)
 ```
 /apps
-  /web         # Next.js + React overlay + Phaser scene renderer
+  /web         # Next.js + React overlay + Three.js scene renderer
   /server      # Colyseus authoritative server
 /packages
   /shared      # zod schemas + shared TS types
   /game        # deterministic gameplay engine + tests
   /content     # TS-authored content modules + manifests and registry outputs
-  /rendering   # Phaser scene, VFX director, bridge (no gameplay logic)
+  /rendering   # Three.js scene, renderer bridge (no gameplay logic)
   /tools       # registry/codegen + audits
 /assets
   /placeholders
@@ -44,7 +44,7 @@ This document distills the current direction for the Cars and Magic MVP so futur
 - **W3 Colyseus room:** message handlers for playline submit, timers, auto-fill, slot summary emission.
 - **W4 Client UX:** Next routes for play/lobby/match, PlayLine UI (4 slots), lobby ready state, Zustand stores, networking wrapper.
 - **W5 Assets/content:** asset taxonomy + placeholder manifest + starter content pack referencing keys, asset audit script.
-- **W6 Rendering:** Phaser DragStrip scene, beat sequencer for slot summaries, VFX director keyed by manifest.
+- **W6 Rendering:** Three.js scene using greybox primitives (track, cars, effects), beat sequencer for slot summaries, and a rendering bridge keyed by manifest-provided asset URLs.
 - **W7 Tooling:** `/dev/assets` preview, asset/content audits wired into scripts/CI.
 - **W8 Deployment:** Render configs and client “waking server” experience.
 
