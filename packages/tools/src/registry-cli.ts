@@ -36,11 +36,15 @@ const locksDir = path.join(repoRoot, 'packages', 'registry', 'locks');
 
 function usage(): never {
   console.error(`Usage: pnpm --filter @cars-and-magic/tools registry <command> [args]\n\nCommands:\n  list <domain>                         List entries for a domain\n  add <domain> <key>                    Reserve the next ID for a key\n  rename <domain> <id> <newKey>         Rename an existing key\n  retire <domain> <id> [reason]         Mark an entry as retired\n\nDomains: ${SUPPORTED_DOMAINS.join(', ')}`);
-  process.exit(1);
+  return process.exit(1);
+}
+
+function isDomain(value: string | undefined): value is RegistryDomain {
+  return Boolean(value && SUPPORTED_DOMAINS.includes(value as RegistryDomain));
 }
 
 function parseDomain(value: string | undefined): RegistryDomain {
-  if (!value || !SUPPORTED_DOMAINS.includes(value)) {
+  if (!isDomain(value)) {
     console.error(`Unknown or missing domain: ${value ?? 'undefined'}`);
     usage();
   }

@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "registry": "tsx src/registry-cli.ts"
+    "registry": "tsx src/registry-cli.ts",
+    "gen": "tsx src/registry-gen.ts"
   },
   "devDependencies": {
     "tsx": "^4.19.2"
