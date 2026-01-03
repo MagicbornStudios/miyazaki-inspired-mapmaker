@@ -1,0 +1,8 @@
+{
+  "domain": "Car",
+  "range": {
+    "start": 5000,
+    "end": 5999
+  },
+  "entries": []
+}
