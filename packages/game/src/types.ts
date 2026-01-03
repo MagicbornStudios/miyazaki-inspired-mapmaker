@@ -51,4 +51,5 @@ export interface ResolveContext {
   turn: number;
   players: PlayerState[];
   cardLibrary: CardLibrary;
+  defaultCardId?: number;
 }
