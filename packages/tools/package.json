@@ -1,0 +1,12 @@
+{
+  "name": "@cars-and-magic/tools",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "registry": "tsx src/registry-cli.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2"
+  }
+}
