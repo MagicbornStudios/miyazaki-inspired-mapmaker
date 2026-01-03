@@ -1,7 +1,7 @@
 import { PLAYLINE_SLOT_COUNT } from '@cars-and-magic/shared';
 import { describe, expect, it } from 'vitest';
 
-import { resolveSlot, resolveTurn } from './resolve.js';
+import { IMMOBILIZED_TAG, SLOT_NOTES, resolveSlot, resolveTurn } from './resolve.js';
 import type { CardLibrary, PlayerState, StatusState } from './types.js';
 
 const baseStatus: StatusState = { id: 1, duration: 1, tags: [] };
@@ -41,7 +41,7 @@ describe('resolveSlot', () => {
       102: { id: 102, cost: 1, effects: [{ type: 'move', amount: 2 }] }
     };
 
-    const immobilized: StatusState = { id: 9, duration: 1, tags: ['immobilized'] };
+    const immobilized: StatusState = { id: 9, duration: 1, tags: [IMMOBILIZED_TAG] };
     const players: PlayerState[] = [
       createPlayer({ id: 'A', statuses: [immobilized], playline: [102, null, null, null] })
     ];
@@ -49,7 +49,7 @@ describe('resolveSlot', () => {
     const result = resolveSlot(0, cardLibrary, players);
     const outcome = result.outcomes[0];
 
-    expect(outcome.notes).toContain('Immobilized');
+    expect(outcome.notes).toContain(SLOT_NOTES.immobilized);
     expect(result.players[0].statuses.length).toBe(0);
     expect(result.players[0].distance).toBe(0);
     expect(result.players[0].resources.current).toBe(3);
@@ -81,6 +81,19 @@ describe('resolveSlot', () => {
     expect(opponent?.distance).toBe(1);
     expect(outcome?.statusesApplied).toContain(7);
   });
+
+  it('auto-fills a default card when a slot is empty', () => {
+    const cardLibrary: CardLibrary = {
+      104: { id: 104, cost: 0, effects: [{ type: 'move', amount: 1 }] }
+    };
+
+    const players: PlayerState[] = [createPlayer({ id: 'Solo', playline: [null, null, null, null] })];
+
+    const result = resolveSlot(0, cardLibrary, players, 104);
+
+    expect(result.outcomes[0].cardId).toBe(104);
+    expect(result.players[0].distance).toBe(1);
+  });
 });
 
 describe('resolveTurn', () => {
@@ -101,5 +114,75 @@ describe('resolveTurn', () => {
     expect(afterTurn.find((player) => player.id === 'B')?.distance).toBe(1);
     expect(summary.slots).toHaveLength(PLAYLINE_SLOT_COUNT);
     expect(summary.winnerId).toBe('A');
+  });
+
+  it('resolves players deterministically even when provided out of order', () => {
+    const cardLibrary: CardLibrary = {
+      203: { id: 203, cost: 0, effects: [{ type: 'move', amount: 1 }] }
+    };
+
+    const players: PlayerState[] = [
+      createPlayer({ id: 'B', playline: [203, null, null, null] }),
+      createPlayer({ id: 'A', playline: [203, null, null, null] })
+    ];
+
+    const { summary } = resolveTurn({ turn: 1, cardLibrary, players });
+
+    expect(summary.slots[0].outcomes.map((outcome) => outcome.playerId)).toEqual(['A', 'B']);
+  });
+
+  it('tracks resource exhaustion across slots mid-playline', () => {
+    const cardLibrary: CardLibrary = {
+      204: { id: 204, cost: 2, effects: [{ type: 'move', amount: 2 }] }
+    };
+
+    const players: PlayerState[] = [
+      createPlayer({
+        id: 'A',
+        resources: { current: 3, max: 3 },
+        playline: [204, 204, null, null]
+      })
+    ];
+
+    const { summary, players: afterTurn } = resolveTurn({ turn: 1, cardLibrary, players });
+
+    expect(afterTurn[0].distance).toBe(2);
+    expect(summary.slots[1].outcomes[0].notes).toContain(SLOT_NOTES.insufficientResources);
+  });
+
+  it('carries statuses between slots to block immobilized actors', () => {
+    const immobilize: StatusState = { id: 10, duration: 2, tags: [IMMOBILIZED_TAG] };
+    const cardLibrary: CardLibrary = {
+      205: { id: 205, cost: 0, effects: [{ type: 'applyStatus', status: immobilize }] },
+      206: { id: 206, cost: 1, effects: [{ type: 'move', amount: 3 }] }
+    };
+
+    const players: PlayerState[] = [
+      createPlayer({ id: 'A', playline: [205, null, null, null] }),
+      createPlayer({ id: 'B', playline: [null, 206, null, null] })
+    ];
+
+    const { summary, players: afterTurn } = resolveTurn({ turn: 1, cardLibrary, players });
+
+    const slotOneOutcome = summary.slots[1].outcomes.find((outcome) => outcome.playerId === 'B');
+    expect(slotOneOutcome?.notes).toContain(SLOT_NOTES.immobilized);
+    expect(afterTurn.find((player) => player.id === 'B')?.distance).toBe(0);
+  });
+
+  it('auto-fills the default card across all empty slots', () => {
+    const defaultCard: CardLibrary[number] = { id: 207, cost: 0, effects: [{ type: 'move', amount: 1 }] };
+    const cardLibrary: CardLibrary = { 207: defaultCard };
+
+    const players: PlayerState[] = [createPlayer({ id: 'Solo', playline: [null, null, null, null] })];
+
+    const { players: afterTurn, summary } = resolveTurn({
+      turn: 1,
+      cardLibrary,
+      players,
+      defaultCardId: defaultCard.id
+    });
+
+    expect(afterTurn[0].distance).toBe(4);
+    expect(summary.slots.every((slot) => slot.outcomes[0].cardId === defaultCard.id)).toBe(true);
   });
 });

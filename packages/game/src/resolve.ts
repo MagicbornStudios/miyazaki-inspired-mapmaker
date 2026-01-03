@@ -5,6 +5,15 @@ import { canAfford } from './resources.js';
 import { hasStatusWithTag, tickStatuses } from './status.js';
 import type { CardDefinition, CardLibrary, PlayerState, ResolveContext, SlotResolutionResult } from './types.js';
 
+export const IMMOBILIZED_TAG = 'immobilized';
+
+export const SLOT_NOTES = {
+  noCardPlayed: 'No card played',
+  immobilized: 'Immobilized',
+  unknownCard: 'Unknown card',
+  insufficientResources: 'Insufficient resources'
+} as const;
+
 function clonePlayer(player: PlayerState): PlayerState {
   return {
     ...player,
@@ -15,6 +24,10 @@ function clonePlayer(player: PlayerState): PlayerState {
 
 function replacePlayer(players: PlayerState[], updated: PlayerState): PlayerState[] {
   return players.map((player) => (player.id === updated.id ? updated : player));
+}
+
+function sortPlayers(players: PlayerState[]): PlayerState[] {
+  return [...players].sort((a, b) => a.id.localeCompare(b.id));
 }
 
 function resolveCard(
@@ -33,32 +46,33 @@ function resolveCard(
 export function resolveSlot(
   slotIndex: number,
   cardLibrary: CardLibrary,
-  players: PlayerState[]
+  players: PlayerState[],
+  defaultCardId?: number
 ): SlotResolutionResult {
-  let workingPlayers = players.map(clonePlayer);
+  let workingPlayers = sortPlayers(players).map(clonePlayer);
   const outcomes: SlotOutcome[] = [];
 
   for (let i = 0; i < workingPlayers.length; i += 1) {
     const actor = workingPlayers[i];
-    const cardId = actor.playline[slotIndex];
+    const cardId = actor.playline[slotIndex] ?? defaultCardId ?? null;
     if (cardId === null) {
       outcomes.push({
         playerId: actor.id,
         cardId: null,
         distanceDelta: 0,
         statusesApplied: [],
-        notes: 'No card played'
+        notes: SLOT_NOTES.noCardPlayed
       });
       continue;
     }
 
-    if (hasStatusWithTag(actor.statuses, 'immobilized')) {
+    if (hasStatusWithTag(actor.statuses, IMMOBILIZED_TAG)) {
       outcomes.push({
         playerId: actor.id,
         cardId,
         distanceDelta: 0,
         statusesApplied: [],
-        notes: 'Immobilized'
+        notes: SLOT_NOTES.immobilized
       });
       continue;
     }
@@ -70,7 +84,7 @@ export function resolveSlot(
         cardId,
         distanceDelta: 0,
         statusesApplied: [],
-        notes: 'Unknown card'
+        notes: SLOT_NOTES.unknownCard
       });
       continue;
     }
@@ -81,7 +95,7 @@ export function resolveSlot(
         cardId,
         distanceDelta: 0,
         statusesApplied: [],
-        notes: 'Insufficient resources'
+        notes: SLOT_NOTES.insufficientResources
       });
       continue;
     }
@@ -101,7 +115,7 @@ export function resolveSlot(
 
 export function resolveTurn(context: ResolveContext): { players: PlayerState[]; summary: TurnSummary } {
   const { cardLibrary } = context;
-  let workingPlayers = context.players.map(clonePlayer);
+  let workingPlayers = sortPlayers(context.players).map(clonePlayer);
   const slots: [SlotSummary, SlotSummary, SlotSummary, SlotSummary] = [
     { slotIndex: 0, outcomes: [], tags: [] },
     { slotIndex: 1, outcomes: [], tags: [] },
@@ -110,7 +124,12 @@ export function resolveTurn(context: ResolveContext): { players: PlayerState[]; 
   ];
 
   for (let slotIndex = 0; slotIndex < PLAYLINE_SLOT_COUNT; slotIndex += 1) {
-    const { players: afterSlot, outcomes } = resolveSlot(slotIndex, cardLibrary, workingPlayers);
+    const { players: afterSlot, outcomes } = resolveSlot(
+      slotIndex,
+      cardLibrary,
+      workingPlayers,
+      context.defaultCardId
+    );
     workingPlayers = afterSlot;
     slots[slotIndex] = { slotIndex, outcomes, tags: [] };
   }
