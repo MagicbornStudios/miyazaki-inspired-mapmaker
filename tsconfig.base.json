@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM"],
+    "strict": true,
+    "allowJs": false,
+    "noEmit": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
+    "types": ["vitest/globals"],
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": [
+    "./apps",
+    "./packages",
+    "./scripts",
+    "./vite.config.*",
+    "./vitest.config.*",
+    "./eslint.config.*"
+  ],
+  "exclude": ["node_modules", "dist", "coverage"]
+}
