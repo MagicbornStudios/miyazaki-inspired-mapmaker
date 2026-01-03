@@ -18,7 +18,11 @@ const allRegistries = [
 ] as const;
 
 export const registryLookups = {
-  byId: {},
+  byId: {
+    8000: { domain: 'Net', key: 'submit_playline', status: 'active' },
+    8001: { domain: 'Net', key: 'state_snapshot', status: 'active' },
+    8002: { domain: 'Net', key: 'turn_resolved', status: 'active' }
+  },
   byKey: {
     "Card": {},
     "Status": {},
@@ -27,7 +31,11 @@ export const registryLookups = {
     "Track": {},
     "Asset": {},
     "VFX": {},
-    "Net": {}
+    "Net": {
+      "submit_playline": 8000,
+      "state_snapshot": 8001,
+      "turn_resolved": 8002
+    }
   }
 } satisfies RegistryLookupTables;
 
