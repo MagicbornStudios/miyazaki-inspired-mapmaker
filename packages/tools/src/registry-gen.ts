@@ -182,7 +182,7 @@ function generateLookupTables(locks: RegistryLock[]): string {
     ? '{}'
     : `{
 ${entriesWithDomain
-        .map((entry) => `  ${entry.id}: { domain: '${entry.domain}', key: ${JSON.stringify(entry.key)}, status: '${entry.status}'${
+        .map((entry) => `  ${entry.id}: { id: ${entry.id}, domain: '${entry.domain}', key: ${JSON.stringify(entry.key)}, status: '${entry.status}'${
           entry.notes ? `, notes: ${JSON.stringify(entry.notes)}` : ''
         } }`)
         .join(',\n')
