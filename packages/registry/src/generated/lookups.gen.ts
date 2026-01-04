@@ -19,10 +19,10 @@ const allRegistries = [
 
 export const registryLookups = {
   byId: {
-    8000: { domain: 'Net', key: 'submit_playline', status: 'active' },
-    8001: { domain: 'Net', key: 'state_snapshot', status: 'active' },
-    8002: { domain: 'Net', key: 'turn_resolved', status: 'active' }
-  },
+  8000: { id: 8000, domain: 'Net', key: "submit_playline", status: 'active' },
+  8001: { id: 8001, domain: 'Net', key: "state_snapshot", status: 'active' },
+  8002: { id: 8002, domain: 'Net', key: "turn_resolved", status: 'active' }
+},
   byKey: {
     "Card": {},
     "Status": {},

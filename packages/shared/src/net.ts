@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { cardIdSchema, carIdSchema, deckIdSchema, statusIdSchema } from './registry.js';
 import { playLineSchema, turnSummarySchema } from './play.js';
 
-function requireNetCode(key: string): number {
+function requireNetCode(key: keyof typeof registryLookups.byKey.Net): number {
   const code = registryLookups.byKey.Net[key];
   if (typeof code !== 'number') {
     throw new Error(`Missing Net registry entry for ${key}`);
