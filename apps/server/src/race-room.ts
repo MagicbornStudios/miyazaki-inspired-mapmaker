@@ -244,7 +244,7 @@ export class RaceRoom extends Room {
 
   private clearTurnTimer() {
     if (this.turnTimer) {
-      this.clock.clearTimeout(this.turnTimer);
+      this.turnTimer.clear();
       this.turnTimer = undefined;
     }
   }
