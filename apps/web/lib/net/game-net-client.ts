@@ -88,7 +88,7 @@ export class GameNetClient {
   }
 
   get roomId() {
-    return this.room?.id;
+    return this.room?.roomId;
   }
 
   get sessionId() {
