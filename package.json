@@ -11,9 +11,11 @@
     "typecheck": "tsc --noEmit --project tsconfig.base.json",
     "gen": "pnpm -r gen",
     "audit": "pnpm audit",
-    "check": "pnpm run lint && pnpm run typecheck && pnpm run test"
+    "check": "pnpm run lint && pnpm run typecheck && pnpm run test",
+    "registry": "pnpm --filter @cars-and-magic/tools registry --"
   },
   "devDependencies": {
+    "@types/node": "^22.7.4",
     "@typescript-eslint/eslint-plugin": "^8.10.0",
     "@typescript-eslint/parser": "^8.10.0",
     "eslint": "^9.11.0",
