@@ -6,6 +6,8 @@
   "license": "MIT",
   "scripts": {
     "dev": "pnpm -r dev",
+    "build": "pnpm -r build",
+    "start": "pnpm --filter @cars-and-magic/server start",
     "test": "vitest",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit --project tsconfig.base.json",

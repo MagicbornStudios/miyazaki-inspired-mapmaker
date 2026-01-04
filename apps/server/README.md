@@ -20,4 +20,18 @@ Run the server locally with pnpm and the workspace script:
 pnpm --filter @cars-and-magic/server dev
 ```
 
-The service listens on port `2567` by default; override with the `PORT` environment variable.
+The service listens on port `2567` by default; override with the `PORT` environment variable. Build and production entrypoints
+mirror what Render expects:
+
+```bash
+pnpm --filter @cars-and-magic/server build
+pnpm --filter @cars-and-magic/server start
+```
+
+### Render and greybox assets
+
+- `.env.example` at the repo root lists the Render-specific environment variables expected by this service. Copy it to `.env`
+  locally or configure values in the Render dashboard.
+- `GET /healthz` returns a simple `ok` string for health checks.
+- `GET /assets/greybox-manifest.json` returns a JSON manifest of greybox primitives (track, car capsule, smoke effect) so the
+  client can render placeholders without bundling assets on the server. No asset files are required server-side.
