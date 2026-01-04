@@ -1,0 +1,20 @@
+{
+  "name": "@cars-and-magic/server",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "dev": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@cars-and-magic/registry": "workspace:*",
+    "@cars-and-magic/shared": "workspace:*",
+    "@colyseus/ws-transport": "^0.15.3",
+    "colyseus": "^0.15.17"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0"
+  }
+}

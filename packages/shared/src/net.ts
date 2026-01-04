@@ -11,6 +11,14 @@ function requireNetCode(key: string): number {
   return code;
 }
 
+/**
+ * Shared room names for Colyseus definitions and client joins. Keeping them in
+ * one place avoids magic string literals in transport layers.
+ */
+export const netRoomNames = {
+  race: 'race'
+} as const;
+
 export const netMessageCodes = {
   submitPlayLine: requireNetCode('submit_playline'),
   stateSnapshot: requireNetCode('state_snapshot'),
