@@ -129,7 +129,7 @@ importers:
         version: link:../shared
 
   packages/registry:
-    devDependencies:
+    dependencies:
       '@types/node':
         specifier: ^22.7.4
         version: 22.19.3
