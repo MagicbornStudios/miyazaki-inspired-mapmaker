@@ -1,5 +1,5 @@
+import * as colyseus from 'colyseus';
 import { createServer } from 'http';
-import { Server } from 'colyseus';
 import { WebSocketTransport } from '@colyseus/ws-transport';
 import { netRoomNames } from '@cars-and-magic/shared';
 import { RaceRoom } from './race-room.js';
@@ -26,7 +26,7 @@ httpServer.on('request', (req, res) => {
   }
 });
 
-const gameServer = new Server({
+const gameServer = new colyseus.Server({
   transport: new WebSocketTransport({
     server: httpServer
   })

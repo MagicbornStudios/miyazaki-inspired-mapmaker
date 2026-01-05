@@ -1,5 +1,5 @@
 import { cardIdSchema, netMessageCodes, playLineSchema, PLAYLINE_SLOT_COUNT, stateSnapshotMessageSchema, submitPlayLineMessageSchema, turnResolvedMessageSchema, turnSummarySchema, type PlayLine, type PlayerState, type SlotSummary } from '@cars-and-magic/shared';
-import { Client, Delayed, Room } from 'colyseus';
+import * as colyseus from 'colyseus';
 import { z } from 'zod';
 
 const readyMessageSchema = z.object({
@@ -13,7 +13,7 @@ type RaceRoomOptions = {
 };
 
 type PlayerSession = {
-  client: Client;
+  client: colyseus.Client;
   state: PlayerState;
   ready: boolean;
 };
@@ -31,9 +31,9 @@ function createEmptyPlayLine(): PlayLine {
  * - Broadcasts authoritative state snapshots and turn resolution payloads
  *   using shared network message codes to keep clients in sync.
  */
-export class RaceRoom extends Room {
+export class RaceRoom extends colyseus.Room {
   private options!: RaceRoomOptions;
-  private turnTimer?: Delayed;
+  private turnTimer?: colyseus.Delayed;
   private turnDeadline?: number;
   private turn = 1;
   private readonly players = new Map<string, PlayerSession>();
@@ -51,7 +51,7 @@ export class RaceRoom extends Room {
     this.onMessage(netMessageCodes.submitPlayLine, (client, payload) => this.handleSubmitPlayLine(client, payload));
   }
 
-  onJoin(client: Client) {
+  onJoin(client: colyseus.Client) {
     const playerState: PlayerState = {
       id: client.sessionId,
       hand: [this.options.autofillCardId],
@@ -69,7 +69,7 @@ export class RaceRoom extends Room {
     this.broadcastSnapshot();
   }
 
-  onLeave(client: Client) {
+  onLeave(client: colyseus.Client) {
     this.players.delete(client.sessionId);
 
     if (this.players.size === 0) {
@@ -81,7 +81,7 @@ export class RaceRoom extends Room {
     this.broadcastSnapshot();
   }
 
-  private handleReady(client: Client, payload: unknown) {
+  private handleReady(client: colyseus.Client, payload: unknown) {
     const parsed = readyMessageSchema.safeParse(payload);
     if (!parsed.success) {
       return;
@@ -98,7 +98,7 @@ export class RaceRoom extends Room {
     this.maybeStartTurn();
   }
 
-  private handleSubmitPlayLine(client: Client, payload: unknown) {
+  private handleSubmitPlayLine(client: colyseus.Client, payload: unknown) {
     const parsed = submitPlayLineMessageSchema.safeParse({
       code: netMessageCodes.submitPlayLine,
       payload
