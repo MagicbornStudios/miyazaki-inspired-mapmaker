@@ -13,6 +13,7 @@
   "dependencies": {
     "@cars-and-magic/registry": "workspace:*",
     "@cars-and-magic/shared": "workspace:*",
+    "@colyseus/schema": "^2.0.37",
     "@colyseus/ws-transport": "^0.15.3",
     "colyseus": "^0.15.17"
   },
