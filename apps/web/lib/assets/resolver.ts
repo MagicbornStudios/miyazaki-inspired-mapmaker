@@ -1,4 +1,5 @@
 import { registryLookups } from '@cars-and-magic/registry';
+import type { RegistryLookupEntry } from '@cars-and-magic/registry';
 import { assetKeySchema } from '@cars-and-magic/shared';
 import { z } from 'zod';
 import manifestJson from '../../../../asset-manifest.json';
@@ -57,7 +58,19 @@ function normalizeAssetKey(rawKey: string): string | null {
 
 export function resolveAssetByKey(assetKey: string, hintType?: AssetType): ResolvedAsset {
   const normalizedKey = normalizeAssetKey(assetKey);
-  const manifestEntry = normalizedKey ? manifest.assets[normalizedKey] : undefined;
+
+  if (!normalizedKey) {
+    const fallbackType = hintType ?? DEFAULT_ASSET_TYPE;
+
+    return {
+      key: assetKey,
+      type: fallbackType,
+      descriptor: pickDefaultDescriptor(fallbackType),
+      source: 'default',
+    } satisfies ResolvedAsset;
+  }
+
+  const manifestEntry = manifest.assets[normalizedKey];
   const fallbackType = manifestEntry?.type ?? hintType ?? DEFAULT_ASSET_TYPE;
 
   if (manifestEntry) {
@@ -70,7 +83,7 @@ export function resolveAssetByKey(assetKey: string, hintType?: AssetType): Resol
   }
 
   return {
-    key: normalizedKey ?? assetKey,
+    key: normalizedKey,
     type: fallbackType,
     descriptor: pickDefaultDescriptor(fallbackType),
     source: 'default',
@@ -78,7 +91,9 @@ export function resolveAssetByKey(assetKey: string, hintType?: AssetType): Resol
 }
 
 export function resolveAssetByRegistryId(assetId: number, hintType?: AssetType): ResolvedAsset {
-  const lookup = registryLookups.byId[assetId];
+  const lookup = registryLookups.byId[assetId as keyof typeof registryLookups.byId] as
+    | RegistryLookupEntry
+    | undefined;
 
   if (lookup?.domain === 'Asset') {
     return {
