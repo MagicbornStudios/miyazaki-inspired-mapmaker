@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "pnpm -r dev",
-    "build": "pnpm install --frozen-lockfile && pnpm -r build",
+    "build": "pnpm install --frozen-lockfile && pnpm run verify:schema-version && pnpm -r build",
     "start": "pnpm --filter @cars-and-magic/server start",
     "test": "vitest",
     "lint": "eslint .",
@@ -15,6 +15,7 @@
     "gen:verify": "pnpm run gen && git diff --exit-code",
     "audit": "pnpm audit",
     "check": "pnpm run gen:verify && pnpm run lint && pnpm run typecheck && pnpm run test",
+    "verify:schema-version": "node scripts/verify-schema-version.cjs",
     "registry": "pnpm --filter @cars-and-magic/tools registry --"
   },
   "devDependencies": {
