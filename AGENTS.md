@@ -10,7 +10,7 @@ This file defines expectations for any automated or human contributor working in
 
 ## Architecture Expectations
 - Honor the monorepo layout described in `README.md`: separate gameplay (`packages/game`), content (`packages/content`), rendering (`packages/rendering`), shared contracts (`packages/shared`), and tools (`packages/tools`).
-- Keep Phaser/rendering free of gameplay logic; the server and gameplay packages own deterministic resolution.
+- Keep Three.js/rendering code free of gameplay logic; the server and gameplay packages own deterministic resolution.
 - Use zod for validation at boundaries; avoid unchecked `any` types.
 - Use numeric identifiers and registry/codegen flows instead of hardcoded string message names where feasible.
 
