@@ -7,7 +7,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "dev": "tsx src/index.ts",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "pnpm --filter @cars-and-magic/registry build && pnpm --filter @cars-and-magic/shared build && tsc -p tsconfig.build.json",
     "start": "node dist/index.js"
   },
   "dependencies": {
