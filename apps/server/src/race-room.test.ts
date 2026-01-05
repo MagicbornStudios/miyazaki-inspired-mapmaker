@@ -1,5 +1,6 @@
 import { netMessageCodes } from '@cars-and-magic/shared';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import * as colyseus from 'colyseus';
 
 vi.mock('colyseus', () => {
   class FakeDelayed {
@@ -39,13 +40,10 @@ vi.mock('colyseus', () => {
 
   return { Client: FakeClient, Delayed: FakeDelayed, Room: FakeRoom };
 });
-
-import { Client } from 'colyseus';
-
 import { RaceRoom } from './race-room.js';
 
-function createClient(id: string): Client {
-  return { sessionId: id } as Client;
+function createClient(id: string): colyseus.Client {
+  return { sessionId: id } as colyseus.Client;
 }
 
 describe('RaceRoom', () => {
