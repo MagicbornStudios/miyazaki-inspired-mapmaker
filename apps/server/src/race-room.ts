@@ -220,7 +220,7 @@ export class RaceRoom extends Room {
       }
     });
 
-    this.broadcast(resolvedMessage);
+    this.broadcast(resolvedMessage.code, resolvedMessage);
 
     this.turn += 1;
     this.turnDeadline = nextTurnDeadline;
@@ -239,7 +239,7 @@ export class RaceRoom extends Room {
       }
     });
 
-    this.broadcast(message);
+    this.broadcast(message.code, message);
   }
 
   private clearTurnTimer() {
