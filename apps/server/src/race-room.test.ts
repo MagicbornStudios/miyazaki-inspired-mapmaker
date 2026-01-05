@@ -1,6 +1,46 @@
 import { netMessageCodes } from '@cars-and-magic/shared';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('colyseus', () => {
+  class FakeDelayed {
+    private elapsed = 0;
+    private cleared = false;
+
+    constructor(private readonly callback: () => void, private readonly delay: number) {}
+
+    tick(deltaMs: number) {
+      if (this.cleared) return;
+      this.elapsed += deltaMs;
+      if (this.elapsed >= this.delay) {
+        this.callback();
+        this.cleared = true;
+      }
+    }
+
+    clear() {
+      this.cleared = true;
+    }
+  }
+
+  class FakeRoom {
+    broadcast = (..._args: unknown[]) => {};
+    clock = {
+      setTimeout: (callback: () => void, delay: number) => new FakeDelayed(callback, delay)
+    };
+    maxClients = 0;
+    onMessageHandlers: Record<string | number, (client: unknown, payload: unknown) => void> = {};
+
+    onMessage(type: string | number, handler: (client: unknown, payload: unknown) => void) {
+      this.onMessageHandlers[type] = handler;
+    }
+  }
+
+  class FakeClient {}
+
+  return { Client: FakeClient, Delayed: FakeDelayed, Room: FakeRoom };
+});
+
 import { Client } from 'colyseus';
-import { describe, expect, it } from 'vitest';
 
 import { RaceRoom } from './race-room.js';
 
@@ -9,10 +49,16 @@ function createClient(id: string): Client {
 }
 
 describe('RaceRoom', () => {
+  let broadcasts: unknown[];
+
+  beforeEach(() => {
+    broadcasts = [];
+  });
+
   it('clears the countdown when ready players drop below the minimum', () => {
     const room = new RaceRoom();
-    const broadcasts: unknown[] = [];
-    room.broadcast = ((message: unknown) => broadcasts.push(message)) as unknown as typeof room.broadcast;
+    room.broadcast = ((type: unknown, message?: unknown) =>
+      broadcasts.push(message ?? type)) as unknown as typeof room.broadcast;
     room.onCreate({ turnDurationMs: 50, minReadyPlayers: 2, autofillCardId: 1000 });
 
     const playerA = createClient('A');
@@ -35,8 +81,8 @@ describe('RaceRoom', () => {
 
   it('resolves turns with autofilled slots and broadcasts the summary', () => {
     const room = new RaceRoom();
-    const broadcasts: unknown[] = [];
-    room.broadcast = ((message: unknown) => broadcasts.push(message)) as unknown as typeof room.broadcast;
+    room.broadcast = ((type: unknown, message?: unknown) =>
+      broadcasts.push(message ?? type)) as unknown as typeof room.broadcast;
     room.onCreate({ turnDurationMs: 5, minReadyPlayers: 2, autofillCardId: 1000 });
 
     const playerA = createClient('A');

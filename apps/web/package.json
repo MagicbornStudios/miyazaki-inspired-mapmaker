@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@cars-and-magic/registry": "workspace:*",
     "@radix-ui/react-slot": "^1.1.2",
     "@cars-and-magic/shared": "workspace:*",
     "class-variance-authority": "^0.7.0",
