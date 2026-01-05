@@ -1,0 +1,21 @@
+{
+  "defaults": {
+    "model": { "kind": "primitive", "shape": "box", "color": "#9ca3af" },
+    "texture": { "kind": "primitive", "shape": "plane", "color": "#9ca3af" },
+    "ui": { "kind": "primitive", "shape": "rounded-rect", "color": "#d1d5db" }
+  },
+  "assets": {
+    "ui.panel.default": {
+      "type": "ui",
+      "descriptor": { "kind": "primitive", "shape": "rounded-rect", "color": "#cbd5e1" }
+    },
+    "world.prototype.tree": {
+      "type": "model",
+      "descriptor": { "kind": "primitive", "shape": "box", "color": "#22c55e" }
+    },
+    "world.prototype.ground": {
+      "type": "texture",
+      "descriptor": { "kind": "primitive", "shape": "plane", "color": "#86efac" }
+    }
+  }
+}
