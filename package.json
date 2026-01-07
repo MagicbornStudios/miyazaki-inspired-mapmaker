@@ -32,7 +32,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@colyseus/schema": "2.0.37"
+      "@colyseus/schema": "3.0.76"
     }
   }
 }

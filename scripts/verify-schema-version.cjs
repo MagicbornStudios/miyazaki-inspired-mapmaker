@@ -5,7 +5,7 @@ const { rmSync } = require('node:fs');
 const { homedir } = require('node:os');
 const { join, resolve } = require('node:path');
 
-const EXPECTED_VERSION = '2.0.37';
+const EXPECTED_VERSION = '3.0.76';
 const workspaceRoot = resolve(__dirname, '..');
 
 function extractSchemaVersions(dependencies, versions) {
